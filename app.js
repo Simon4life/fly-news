@@ -24,6 +24,7 @@ app.post("/analyze", async (req, res) => {
     const mainImage = await extractMainImage(data);
 
     const summaryObj = await summarizeText(article.textContent);
+    console.log(summaryObj)
     res.json({
       mainImage,
       summary: summaryObj.summary,
@@ -37,7 +38,7 @@ app.post("/analyze", async (req, res) => {
   }
 });
 
-const API_KEY = "";
+const API_KEY = process.env.API_KEY
 const MODEL = "gemini-2.5-flash"; // Stable 2026 workhorse model
 const BASE_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
 
@@ -83,9 +84,6 @@ async function summarizeText(articleText) {
     
     // Parse the JSON string returned by Gemini
     const result = JSON.parse(response.data.candidates[0].content.parts[0].text);
-    
-    console.log("Summary:", result.summary);
-    console.log("Implications:", result.implications);
     return result;
   } catch (error) {
     console.error("Error analyzing text:", error.response?.data || error.message);
